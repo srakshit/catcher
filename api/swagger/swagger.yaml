@@ -30,9 +30,9 @@ paths:
       - application/json
       parameters:
       - in: body
-        name: catcher
+        name: Catcher
         required: true
-        description: Add catcher
+        description: Add Catcher
         schema:
           $ref: '#/definitions/Catcher'
       responses:

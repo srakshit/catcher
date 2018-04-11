@@ -6,7 +6,7 @@ var server = require('../../../app');
 var catchers = require('../../../db/catchers');
 
 describe('controllers', () => {
-  describe('addNeighbour', () => {
+  describe('addCatcher', () => {
     describe('POST /catchers', () => {
       describe('happy path', () => {
         //Cleanup

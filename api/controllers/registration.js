@@ -22,10 +22,10 @@ function addCatcher(req, res, next) {
         .catch((err) => {
             let errMsg = err.message.toLowerCase();
             if (new RegExp(/unique constraint/).test(errMsg)) {
-                if (new RegExp(/neighbours.email/).test(errMsg) || new RegExp(/neighbours_email_unique/).test(err)) {
+                if (new RegExp(/catchers.email/).test(errMsg) || new RegExp(/catchers_email_unique/).test(err)) {
                     return next(new errs.ConflictError('Catcher with same email exists!'));
                 } 
-                if (new RegExp(/neighbours.phone/).test(errMsg) || new RegExp(/neighbours_phone_unique/).test(err)) {
+                if (new RegExp(/catchers.phone/).test(errMsg) || new RegExp(/catchers_phone_unique/).test(err)) {
                     return next(new errs.ConflictError('Catcher with same phone number exists!'));
                 }
             }
