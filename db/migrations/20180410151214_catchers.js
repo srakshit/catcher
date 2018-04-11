@@ -1,7 +1,7 @@
 'use strict';
 
 exports.up = (knex) => {
-    return knex.schema.createTable('neighbours', (table) => {
+    return knex.schema.createTable('catchers', (table) => {
         table.increments();
         table.string('name').notNullable();
         table.string('email').notNullable().unique();
@@ -12,5 +12,5 @@ exports.up = (knex) => {
 };
 
 exports.down = (knex) => {
-    return knex.schema.dropTable('neighbours');
+    return knex.schema.dropTable('catchers');
 };

@@ -2,28 +2,28 @@
 
 let knex = require('./knex.js');
 
-function Neighbours() {
-    return knex('neighbours');
+function Catchers() {
+    return knex('catchers');
 }
 
 function getAll() {
-    return Neighbours().select();
+    return Catchers().select();
 }
 
 function getByPhone(phone) {
-    return Neighbours().where('phone', phone).first();
+    return Catchers().where('phone', phone).first();
 }
 
 function getById(id) {
-    return Neighbours().where('id', id).first();
+    return Catchers().where('id', id).first();
 }
 
-function add(neighbour) {
-    return Neighbours().insert(neighbour, 'id');
+function add(catcher) {
+    return Catchers().insert(catcher, 'id');
 }
 
 function deleteByPhone(phone) {
-    return Neighbours().where('phone', phone).del();
+    return Catchers().where('phone', phone).del();
 }
 
 module.exports = {

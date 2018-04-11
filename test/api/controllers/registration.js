@@ -3,18 +3,18 @@
 var should = require('should');
 var request = require('supertest');
 var server = require('../../../app');
-var neighbours = require('../../../db/neighbours');
+var catchers = require('../../../db/catchers');
 
 describe('controllers', () => {
   describe('addNeighbour', () => {
-    describe('POST /neighbours', () => {
+    describe('POST /catchers', () => {
       describe('happy path', () => {
         //Cleanup
-        after(() => neighbours.deleteByPhone('07777777777').then());
+        after(() => catchers.deleteByPhone('07777777777').then());
 
-        it('should add a neighbour', (done) => {
+        it('should add a catcher', (done) => {
           request(server)
-            .post('/neighbours')
+            .post('/catchers')
             .send({
               'name': 'test',
               'email': 'test@test.com',
@@ -27,7 +27,7 @@ describe('controllers', () => {
             .expect(201)
             .end((err, res) => {
               should.not.exist(err);
-              res.body.should.eql({message: 'Neighbour test added!'});
+              res.body.should.eql({message: 'Catcher test added!'});
               done();
             });
         });
@@ -36,7 +36,7 @@ describe('controllers', () => {
       describe('error paths', () => {
         //Setup
         before(() => {
-          neighbours.add({
+          catchers.add({
             'name': 'test',
             'email': 'test@test.com',
             'phone': '07777777777',
@@ -46,11 +46,11 @@ describe('controllers', () => {
         });
 
         //Teardown
-        after(() => neighbours.deleteByPhone('07777777777').then());
+        after(() => catchers.deleteByPhone('07777777777').then());
 
         it('should throw error if phone is alphanumeric', (done) => {
           request(server)
-            .post('/neighbours')
+            .post('/catchers')
             .send({
               'name': 'test',
               'email': 'test@test.com',
@@ -68,9 +68,9 @@ describe('controllers', () => {
             });
         });
 
-        it('should throw error if neighbour with same email exists', (done) => {
+        it('should throw error if catcher with same email exists', (done) => {
           request(server)
-            .post('/neighbours')
+            .post('/catchers')
             .send({
               'name': 'test',
               'email': 'test@test.com',
@@ -83,14 +83,14 @@ describe('controllers', () => {
             .expect(409)
             .end((err, res) => {
               should.not.exist(err);
-              res.body.should.eql({ code: 'Conflict', message: 'Neighbour with same email exists!' });
+              res.body.should.eql({ code: 'Conflict', message: 'Catcher with same email exists!' });
               done();
             });
         });
 
-        it('should throw error if neighbour with same phone exists', (done) => {
+        it('should throw error if catcher with same phone exists', (done) => {
           request(server)
-            .post('/neighbours')
+            .post('/catchers')
             .send({
               'name': 'test',
               'email': 'test1@test.com',
@@ -103,7 +103,7 @@ describe('controllers', () => {
             .expect(409)
             .end((err, res) => {
               should.not.exist(err);
-              res.body.should.eql({ code: 'Conflict', message: 'Neighbour with same phone number exists!' });
+              res.body.should.eql({ code: 'Conflict', message: 'Catcher with same phone number exists!' });
               done();
             });
         });
