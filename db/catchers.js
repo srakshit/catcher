@@ -6,30 +6,23 @@ function Catchers() {
     return knex('catchers');
 }
 
-function getAll() {
-    return Catchers().select();
-}
-
-function getByPhone(phone) {
-    return Catchers().where('phone', phone).first();
-}
-
-function getById(id) {
-    return Catchers().where('id', id).first();
+function getByEmail(email) {
+    return Catchers()
+            .innerJoin('users', 'catchers.user_id', 'users.id')
+            .where('email', email)
+            .first();
 }
 
 function add(catcher) {
-    return Catchers().insert(catcher, 'id');
+    return Catchers().insert(catcher, 'catcher_id');
 }
 
-function deleteByPhone(phone) {
-    return Catchers().where('phone', phone).del();
+function deleteById(id) {
+    return Catchers().where('user_id', id).del();
 }
 
 module.exports = {
-    getAll: getAll,
-    getByPhone: getByPhone,   
-    getById: getById, 
+    getByEmail: getByEmail,
     add: add,
-    deleteByPhone: deleteByPhone
+    deleteById: deleteById
 };

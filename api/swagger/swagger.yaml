@@ -82,16 +82,21 @@ definitions:
   Catcher:
     type: object
     required:
-    - name
+    - firstName
+    - lastName
     - email
     - phone
     - address
     - postcode
     properties:
-      name:
+      firstName:
         type: string
         minLength: 1
-        example: Sherlock Holmes
+        example: Sherlock
+      lastName:
+        type: string
+        minLength: 1
+        example: Holmes
       email:
         type: string
         format: email

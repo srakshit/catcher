@@ -3,6 +3,7 @@
 var should = require('should');
 var request = require('supertest');
 var server = require('../../../app');
+var users = require('../../../db/users');
 var catchers = require('../../../db/catchers');
 
 describe('controllers', () => {
@@ -10,13 +11,17 @@ describe('controllers', () => {
     describe('POST /catchers', () => {
       describe('happy path', () => {
         //Cleanup
-        after(() => catchers.deleteByPhone('07777777777').then());
+        after(() => 
+          users.getByEmail('test@test.com')
+                .then((user) => catchers.deleteById(user.id))
+                .then(() => users.deleteByEmail('test@test.com').then()));
 
         it('should add a catcher', (done) => {
           request(server)
             .post('/catchers')
             .send({
-              'name': 'test',
+              'firstName': 'test',
+              'lastName': 'test',
               'email': 'test@test.com',
               'phone': '07777777777',
               'address': 'test',
@@ -27,7 +32,7 @@ describe('controllers', () => {
             .expect(201)
             .end((err, res) => {
               should.not.exist(err);
-              res.body.should.eql({message: 'Catcher test added!'});
+              res.body.message.should.eql('Catcher test test added!');
               done();
             });
         });
@@ -36,8 +41,9 @@ describe('controllers', () => {
       describe('error paths', () => {
         //Setup
         before(() => {
-          catchers.add({
-            'name': 'test',
+          users.add({
+            'firstName': 'test',
+            'lastName': 'test',
             'email': 'test@test.com',
             'phone': '07777777777',
             'address': 'test',
@@ -46,13 +52,17 @@ describe('controllers', () => {
         });
 
         //Teardown
-        after(() => catchers.deleteByPhone('07777777777').then());
+        after(() => 
+          users.getByEmail('test@test.com')
+                .then((user) => catchers.deleteById(user.id))
+                .then(() => users.deleteByEmail('test@test.com').then()));
 
         it('should throw error if phone is alphanumeric', (done) => {
           request(server)
             .post('/catchers')
             .send({
-              'name': 'test',
+              'firstName': 'test',
+              'lastName': 'test',
               'email': 'test@test.com',
               'phone': 'abcdefghijk',
               'address': 'test',
@@ -72,7 +82,8 @@ describe('controllers', () => {
           request(server)
             .post('/catchers')
             .send({
-              'name': 'test',
+              'firstName': 'test',
+              'lastName': 'test',
               'email': 'test@test.com',
               'phone': '07777777778',
               'address': 'test',
@@ -92,7 +103,8 @@ describe('controllers', () => {
           request(server)
             .post('/catchers')
             .send({
-              'name': 'test',
+              'firstName': 'test',
+              'lastName': 'test',
               'email': 'test1@test.com',
               'phone': '07777777777',
               'address': 'test',
