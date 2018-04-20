@@ -10,6 +10,7 @@ module.exports = {
 
 function addCatcher(req, res, next) {
     let user = req.swagger.params.Catcher.value;
+		user.type = 'C';
 
     if (new RegExp(/[a-zA-Z]/).test(user.phone)) {
         return next(new errs.InvalidContentError('phone number can\'t be alphanumeric!'));

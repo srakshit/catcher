@@ -25,7 +25,8 @@ describe('controllers', () => {
               'email': 'test@test.com',
               'phone': '07777777777',
               'address': 'test',
-              'postcode': 'WA37HX'
+              'postcode': 'WA37HX',
+							'type': 'C'
             })
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
@@ -47,7 +48,8 @@ describe('controllers', () => {
             'email': 'test@test.com',
             'phone': '07777777777',
             'address': 'test',
-            'postcode': 'WA37HX'
+            'postcode': 'WA37HX',
+						'type': 'C'
           }).then();
         });
 
