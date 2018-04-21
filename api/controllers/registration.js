@@ -2,50 +2,56 @@
 
 var errs = require('restify-errors');
 var catchers = require('../../db/catchers');
-var users = require('../../db/users');
-
-module.exports = {
-    addCatcher: addCatcher
-};
 
 function addCatcher(req, res, next) {
-    let user = req.swagger.params.Catcher.value;
-		user.type = 'C';
+    let catcher = req.swagger.params.catcher.value;
+		catcher.type = 'C';
 
-    if (new RegExp(/[a-zA-Z]/).test(user.phone)) {
+    if (new RegExp(/[a-zA-Z]/).test(catcher.phone)) {
         return next(new errs.InvalidContentError('phone number can\'t be alphanumeric!'));
     }
 
-    users.add(user)
+    let catcherIdPrefix = catcher.lastName.substr(0, 1).toUpperCase() + catcher.firstName.substr(0, 1).toUpperCase() + catcher.postcode.toUpperCase();
+
+    catchers.add(catcher, catcherIdPrefix)
         .then((id) => {
-            let catcher = {
-                user_id: parseInt(id),
-                catcher_id: 'CATCHER_'+id
-            };
-            
-            catchers.add(catcher)
-                    .then((id) => {
-                        res.send(201, {message: 'Catcher ' + user.firstName + ' ' + user.lastName + ' added!', id: id[0]});
-                        return next();
-                    })
-                    .catch((err) => {
-                        //TODO: Test this flow
-                        let errMsg = err.message.toLowerCase();
-                        users.deleteByEmail(user.email).then();
-                        return next(new errs.InternalServerError(err.message, 'Failed to create catcher!'));
-                    });
-            
+            res.send(201, {message: 'Catcher ' + catcher.firstName + ' ' + catcher.lastName + ' added!', id: id[0]});
+            return next();
         })
         .catch((err) => {
             let errMsg = err.message.toLowerCase();
             if (new RegExp(/unique constraint/).test(errMsg)) {
                 if (new RegExp(/users.email/).test(errMsg) || new RegExp(/users_email_unique/).test(err)) {
-                    return next(new errs.ConflictError('Catcher with same email exists!'));
+                    return next(new errs.ConflictError('User with same email exists!'));
                 } 
                 if (new RegExp(/users.phone/).test(errMsg) || new RegExp(/users_phone_unique/).test(err)) {
-                    return next(new errs.ConflictError('Catcher with same phone number exists!'));
+                    return next(new errs.ConflictError('User with same phone number exists!'));
                 }
             }
             return next(new errs.InternalServerError(err.message, 'Failed to create catcher!'));
         });
 }
+
+
+function getCatcher(req, res, next) {
+    let id = req.swagger.params.id.value;
+    
+    catchers.getById(id)
+        .then((catcher) => {
+            if (catcher) {
+                res.send(200, catcher);
+                return next();
+            }else {
+                return next(new errs.ResourceNotFoundError('No matching catcher found!'))
+            }
+        })
+        .catch((err) => {
+            //TODO: Test code path
+            return next(new errs.InternalError(err.message, 'Failed to create catcher!'));
+        });
+}
+
+module.exports = {
+    addCatcher: addCatcher,
+    getCatcher: getCatcher
+};

@@ -1,2 +1,0 @@
-DROP DATABASE IF EXISTS catcher;
-CREATE DATABASE catcher;
