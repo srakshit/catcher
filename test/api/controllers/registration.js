@@ -120,7 +120,7 @@ describe('controllers', () => {
                 }, 'TT7HX').then((id) => {
 
                     request(server)
-                        .get('/api/v1/catchers/' + id[0]+'1')
+                        .get('/api/v1/catchers/email/test1@test.com')
                         .set('Accept', 'application/json')
                         .expect('Content-Type', /json/)
                         .expect(404)
