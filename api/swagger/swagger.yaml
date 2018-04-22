@@ -69,9 +69,9 @@ paths:
   /catchers:
     x-swagger-router-controller: registration
     post:
-      summary: add a catcher
+      summary: Add a catcher
       operationId: addCatcher
-      description: Add a catcher to the system
+      description: Add a catcher
       consumes:
       - application/json
       produces:
@@ -82,20 +82,47 @@ paths:
         required: true
         description: Add Catcher
         schema:
-          $ref: '#/definitions/Catcher'
+          $ref: '#/definitions/AddCatcher'
       responses:
         201:
-          description: catcher added
+          description: Catcher added
           schema:
             # a pointer to a definition
             $ref: "#/definitions/SuccessResponse"
         400:
-          description: invalid input, object invalid
+          description: Invalid input, object invalid
           schema:
             # a pointer to a definition
             $ref: "#/definitions/ErrorResponse"
         409:
-          description: an existing catcher already exists
+          description: An existing catcher already exists
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ErrorResponse"
+    
+    put:
+      summary: Update an existing catcher
+      operationId: updateCatcher
+      description: Update an existing catcher
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: catcher
+        required: true
+        description: Update Catcher
+        schema:
+          $ref: '#/definitions/UpdateCatcher'
+      responses:
+        204:
+          description: Catcher updated
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/SuccessResponse"
+        400:
+          description: Invalid catcher id provided
           schema:
             # a pointer to a definition
             $ref: "#/definitions/ErrorResponse"
@@ -103,7 +130,7 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
-  Catcher:
+  AddCatcher:
     type: object
     required:
     - firstName
@@ -140,6 +167,47 @@ definitions:
         maxLength: 9
         description: Postcode without spaces
         example: SW19 01B
+  UpdateCatcher:
+    type: object
+    required:
+    - id
+    - email
+    properties:
+      id:
+        type: string
+        minLength: 12
+        example: CRS7GA000001
+      firstName:
+        type: string
+        minLength: 1
+        example: Sherlock
+      lastName:
+        type: string
+        minLength: 1
+        example: Holmes
+      email:
+        type: string
+        format: email
+        example: sherlock.holmes@detective.com
+      phone:
+        type: string
+        minLength: 11
+        maxLength: 11
+        example: 0123456789
+      address:
+        type: string
+        minLength: 1
+        example: 221B Baker Steeet, London
+      postcode:
+        type: string
+        minLength: 6
+        maxLength: 9
+        description: Postcode without spaces
+        example: SW19 01B
+      isActive:
+        type: boolean
+        description: Catcher status (active/inactive)
+        example: true
   SuccessResponse:
     required:
       - message

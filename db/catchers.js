@@ -40,6 +40,73 @@ function add(catcher, catcherIdPrefix) {
     });
 }
 
+function update(catcher) {
+    let userObj = {};
+    let catcherObj = {};
+    
+    if (catcher.firstName) {
+        userObj.firstName = catcher.firstName;
+    }
+    if (catcher.lastName) {
+        userObj.lastName = catcher.lastName;
+    }
+    if (catcher.address) {
+        userObj.address = catcher.address;
+    }
+    if (catcher.postcode) {
+        userObj.postcode = catcher.postcode;
+    }
+    if (catcher.phone) {
+        userObj.phone = catcher.phone;
+    }
+    if (catcher.firstName) {
+        userObj.firstName = catcher.firstName;
+    }
+
+    if (catcher.isActive !== undefined) {
+        catcherObj.isActive = catcher.isActive;
+    }
+
+    
+    if (!_.isEmpty(userObj) && !_.isEmpty(catcherObj)) {
+        //Update both Users and Catchers table
+        return knex.transaction(function (t) {
+            return Users()
+                .transacting(t)
+                .where('email', catcher.email)
+                .update(userObj)
+                .then(function (id) {
+                    return Catchers()
+                        .transacting(t)
+                        .where('catcher_id', catcher.id)
+                        .update(catcherObj)
+                })
+                .then(t.commit)
+                .catch(t.rollback)
+        });
+    }else if (!_.isEmpty(userObj)){
+        //Update Users table only
+        return knex.transaction(function (t) {
+            return Users()
+                .transacting(t)
+                .where('email', catcher.email)
+                .update(userObj)
+                .then(t.commit)
+                .catch(t.rollback)
+        });
+    }else if (!_.isEmpty(catcherObj)) {
+        //Update Catchers table only
+        return knex.transaction(function (t) {
+            return Catchers()
+                .transacting(t)
+                .where('catcher_id', catcher.id)
+                .update(catcherObj)
+                .then(t.commit)
+                .catch(t.rollback)
+        });
+    }   
+}
+
 function deleteByUserId(id) {
     return knex.transaction(function (t) {
         return Catchers()
@@ -61,5 +128,6 @@ module.exports = {
     getByEmail: getByEmail,
     getById: getById,
     add: add,
-    deleteByUserId: deleteByUserId
+    deleteByUserId: deleteByUserId,
+    update: update
 };

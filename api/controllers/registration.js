@@ -5,13 +5,13 @@ var catchers = require('../../db/catchers');
 
 function addCatcher(req, res, next) {
     let catcher = req.swagger.params.catcher.value;
-		catcher.type = 'C';
+	catcher.type = 'C';
 
     if (new RegExp(/[a-zA-Z]/).test(catcher.phone)) {
         return next(new errs.InvalidContentError('phone number can\'t be alphanumeric!'));
     }
 
-    let catcherIdPrefix = catcher.lastName.substr(0, 1).toUpperCase() + catcher.firstName.substr(0, 1).toUpperCase() + catcher.postcode.toUpperCase();
+    let catcherIdPrefix = 'C' + catcher.lastName.substr(0, 1).toUpperCase() + catcher.firstName.substr(0, 1).toUpperCase() + catcher.postcode.toUpperCase();
 
     catchers.add(catcher, catcherIdPrefix)
         .then((id) => {
@@ -28,6 +28,24 @@ function addCatcher(req, res, next) {
                     return next(new errs.ConflictError('User with same phone number exists!'));
                 }
             }
+            return next(new errs.InternalError(err.message, 'Failed to create catcher!'));
+        });
+}
+
+function updateCatcher(req, res, next) {
+    let catcher = req.swagger.params.catcher.value;
+
+    if (catcher.phone && new RegExp(/[a-zA-Z]/).test(catcher.phone)) {
+        return next(new errs.InvalidContentError('phone number can\'t be alphanumeric!'));
+    }
+
+    catchers.update(catcher)
+        .then(() => {
+            res.send(204);
+            return next();
+        })
+        .catch((err) => {
+            console.log(err);
             return next(new errs.InternalError(err.message, 'Failed to create catcher!'));
         });
 }
@@ -71,5 +89,6 @@ function getCatcherByEmail(req, res, next) {
 module.exports = {
     addCatcher: addCatcher,
     getCatcherById: getCatcherById,
-    getCatcherByEmail: getCatcherByEmail
+    getCatcherByEmail: getCatcherByEmail,
+    updateCatcher: updateCatcher
 };
