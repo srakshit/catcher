@@ -243,7 +243,7 @@ describe('controllers', () => {
         });
     });
 
-    describe.only('PUT /catchers', () => {
+    describe('PUT /catchers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
