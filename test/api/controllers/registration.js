@@ -70,6 +70,70 @@ describe('controllers', () => {
         });
     });
 
+    describe('GET /catchers/email', () => {
+        //Cleanup
+        afterEach(() => 
+            catchers.getByEmail('test@test.com')
+                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
+
+        describe('happy path', () => {
+            it('should get a catcher', (done) => {
+                catchers.add({
+                    'firstName': 'test',
+                    'lastName': 'test',
+                    'email': 'test@test.com',
+                    'phone': '07777777777',
+                    'address': 'test',
+                    'postcode': 'WA37HX',
+                    'type': 'S'
+                }, 'TT7HX').then((id) => {
+
+                    request(server)
+                        .get('/api/v1/catchers/email/test@test.com')
+                        .set('Accept', 'application/json')
+                        .expect('Content-Type', /json/)
+                        .expect(200)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            res.body.firstName.should.eql('test');
+                            res.body.lastName.should.eql('test');
+                            res.body.email.should.eql('test@test.com');
+                            res.body.phone.should.eql('07777777777');
+                            res.body.address.should.eql('test');
+                            res.body.postcode.should.eql('WA37HX');
+                            done();
+                        });
+                });
+            });
+        });
+
+        describe('error paths', () => {
+            it('should throw NotFound error when catcher is not found', (done) => {
+                catchers.add({
+                    'firstName': 'test',
+                    'lastName': 'test',
+                    'email': 'test@test.com',
+                    'phone': '07777777777',
+                    'address': 'test',
+                    'postcode': 'WA37HX',
+                    'type': 'S'
+                }, 'TT7HX').then((id) => {
+
+                    request(server)
+                        .get('/api/v1/catchers/' + id[0]+'1')
+                        .set('Accept', 'application/json')
+                        .expect('Content-Type', /json/)
+                        .expect(404)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            res.body.should.eql({ code: 'ResourceNotFound', message: 'No matching catcher found!' });
+                            done();
+                        });
+                });
+            });
+        });
+    });
+
     describe('POST /catchers', () => {
         //Cleanup
         afterEach(() => 

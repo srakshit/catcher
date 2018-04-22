@@ -24,11 +24,35 @@ paths:
     get:
       description: Returns Catcher to the caller
       # used as the method name of the controller
-      operationId: getCatcher
+      operationId: getCatcherById
       parameters:
         - in: path
           name: id
           description: Catcher Id
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /catchers/email/{email}:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: registration
+    get:
+      description: Returns Catcher to the caller
+      # used as the method name of the controller
+      operationId: getCatcherByEmail
+      parameters:
+        - in: path
+          name: email
+          description: Catcher Email
           required: true
           type: string
       responses:

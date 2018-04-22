@@ -28,12 +28,11 @@ function addCatcher(req, res, next) {
                     return next(new errs.ConflictError('User with same phone number exists!'));
                 }
             }
-            return next(new errs.InternalServerError(err.message, 'Failed to create catcher!'));
+            return next(new errs.InternalError(err.message, 'Failed to create catcher!'));
         });
 }
 
-
-function getCatcher(req, res, next) {
+function getCatcherById(req, res, next) {
     let id = req.swagger.params.id.value;
     
     catchers.getById(id)
@@ -47,11 +46,30 @@ function getCatcher(req, res, next) {
         })
         .catch((err) => {
             //TODO: Test code path
-            return next(new errs.InternalError(err.message, 'Failed to create catcher!'));
+            return next(new errs.InternalError(err.message, 'Failed to retrieve catcher!'));
+        });
+}
+
+function getCatcherByEmail(req, res, next) {
+    let email = req.swagger.params.email.value;
+    
+    catchers.getByEmail(email)
+        .then((catcher) => {
+            if (catcher) {
+                res.send(200, catcher);
+                return next();
+            }else {
+                return next(new errs.ResourceNotFoundError('No matching catcher found!'))
+            }
+        })
+        .catch((err) => {
+            //TODO: Test code path
+            return next(new errs.InternalError(err.message, 'Failed to retrieve catcher!'));
         });
 }
 
 module.exports = {
     addCatcher: addCatcher,
-    getCatcher: getCatcher
+    getCatcherById: getCatcherById,
+    getCatcherByEmail: getCatcherByEmail
 };
