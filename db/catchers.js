@@ -53,6 +53,12 @@ function update(catcher) {
     if (catcher.address) {
         userObj.address = catcher.address;
     }
+    if (catcher.city) {
+        userObj.city = catcher.city;
+    }
+    if (catcher.county) {
+        userObj.county = catcher.county;
+    }
     if (catcher.postcode) {
         userObj.postcode = catcher.postcode;
     }
