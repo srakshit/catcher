@@ -3,10 +3,10 @@ FROM node:8.10.0
 WORKDIR /code
 
 #Only required for debugging
-RUN npm install -g nodemon yarn knex
+RUN npm install -g yarn knex node-gyp
 
 COPY . /code
 
 EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
