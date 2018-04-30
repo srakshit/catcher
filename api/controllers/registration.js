@@ -11,6 +11,8 @@ function addCatcher(req, res, next) {
         return next(new errs.InvalidContentError('phone number can\'t be alphanumeric!'));
     }
 
+    catcher.postcode = catcher.postcode.replace(' ', '');
+
     let catcherIdPrefix = 'C' + catcher.lastName.substr(0, 1).toUpperCase() + catcher.firstName.substr(0, 1).toUpperCase() + catcher.postcode.toUpperCase();
 
     catchers.add(catcher, catcherIdPrefix)
@@ -34,6 +36,10 @@ function addCatcher(req, res, next) {
 
 function updateCatcher(req, res, next) {
     let catcher = req.swagger.params.catcher.value;
+
+    if (catcher.postcode) {
+        catcher.postcode = catcher.postcode.replace(' ', '');
+    }
 
     if (catcher.phone && new RegExp(/[a-zA-Z]/).test(catcher.phone)) {
         return next(new errs.InvalidContentError('phone number can\'t be alphanumeric!'));
