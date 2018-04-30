@@ -23,7 +23,7 @@ describe('controllers', () => {
                     'city': 'test',
                     'county': 'test',
                     'postcode': 'WA37HX',
-                    'type': 'S'
+                    'type': 'C'
                 }, 'CTT7HX').then((id) => {
 
                     request(server)
@@ -56,7 +56,7 @@ describe('controllers', () => {
                     'city': 'test',
                     'county': 'test',
                     'postcode': 'WA37HX',
-                    'type': 'S'
+                    'type': 'C'
                 }, 'CTT7HX').then((id) => {
 
                     request(server)
@@ -91,7 +91,7 @@ describe('controllers', () => {
                     'city': 'test',
                     'county': 'test',
                     'postcode': 'WA37HX',
-                    'type': 'S'
+                    'type': 'C'
                 }, 'CTT7HX').then((id) => {
 
                     request(server)
@@ -126,7 +126,7 @@ describe('controllers', () => {
                     'city': 'test',
                     'county': 'test',
                     'postcode': 'WA37HX',
-                    'type': 'S'
+                    'type': 'C'
                 }, 'CTT7HX').then((id) => {
 
                     request(server)
@@ -163,7 +163,7 @@ describe('controllers', () => {
                         'city': 'test',
                         'county': 'test',
                         'postcode': 'WA3 7HX',
-                        'type': 'S'
+                        'type': 'C'
                     })
                     .set('Accept', 'application/json')
                     .expect('Content-Type', /json/)
@@ -188,7 +188,7 @@ describe('controllers', () => {
                     'city': 'test',
                     'county': 'test',
                     'postcode': 'WA37HX',
-                    'type': 'S'
+                    'type': 'C'
                 }).then();
             });
 
@@ -280,7 +280,7 @@ describe('controllers', () => {
                     'city': 'test',
                     'county': 'test',
                     'postcode': 'WA37HX',
-                    'type': 'S'
+                    'type': 'C'
                 }, 'CTT7HX').then((id) => {
                     request(server)
                         .put('/api/v1/catchers')
@@ -327,7 +327,7 @@ describe('controllers', () => {
                     'city': 'test',
                     'county': 'test',
                     'postcode': 'WA37HX',
-                    'type': 'S'
+                    'type': 'C'
                 }, 'CTT7HX').then((id) => {
                     request(server)
                         .put('/api/v1/catchers')
@@ -367,7 +367,7 @@ describe('controllers', () => {
                     'city': 'test',
                     'county': 'test',
                     'postcode': 'WA37HX',
-                    'type': 'S'
+                    'type': 'C'
                 }, 'CTT7HX').then((id) => {
                     request(server)
                         .put('/api/v1/catchers')
