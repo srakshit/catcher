@@ -2,6 +2,7 @@
 
 var errs = require('restify-errors');
 var catchers = require('../../db/catchers');
+var users = require('../../db/users');
 
 function addCatcher(req, res, next) {
     let catcher = req.swagger.params.catcher.value;
@@ -92,9 +93,28 @@ function getCatcherByEmail(req, res, next) {
         });
 }
 
+function getUserByEmail(req, res, next) {
+    let email = req.swagger.params.email.value;
+    
+    users.getByEmail(email)
+        .then((user) => {
+            if (user) {
+                res.send(200, user);
+                return next();
+            }else {
+                return next(new errs.ResourceNotFoundError('No matching user found!'))
+            }
+        })
+        .catch((err) => {
+            //TODO: Test code path
+            return next(new errs.InternalError(err.message, 'Failed to retrieve user!'));
+        });
+}
+
 module.exports = {
     addCatcher: addCatcher,
     getCatcherById: getCatcherById,
     getCatcherByEmail: getCatcherByEmail,
-    updateCatcher: updateCatcher
+    updateCatcher: updateCatcher,
+    getUserByEmail: getUserByEmail
 };

@@ -6,6 +6,74 @@ var server = require('../../../app');
 var catchers = require('../../../db/catchers');
 
 describe('controllers', () => {
+    describe('GET /users', () => {
+        //Cleanup
+        afterEach(() => 
+            catchers.getByEmail('test@test.com')
+                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
+
+        describe('happy path', () => {
+            it('should get a user', (done) => {
+                catchers.add({
+                    'firstName': 'test',
+                    'lastName': 'test',
+                    'email': 'test@test.com',
+                    'phone': '07777777777',
+                    'address': 'test',
+                    'city': 'test',
+                    'county': 'test',
+                    'postcode': 'WA37HX',
+                    'type': 'C'
+                }, 'CTT7HX').then((id) => {
+
+                    request(server)
+                        .get('/api/v1/users/email/test@test.com')
+                        .set('Accept', 'application/json')
+                        .expect('Content-Type', /json/)
+                        .expect(200)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            res.body.firstName.should.eql('test');
+                            res.body.lastName.should.eql('test');
+                            res.body.email.should.eql('test@test.com');
+                            res.body.phone.should.eql('07777777777');
+                            res.body.address.should.eql('test');
+                            res.body.postcode.should.eql('WA37HX');
+                            done();
+                        });
+                });
+            });
+        });
+
+        describe('error paths', () => {
+            it('should throw NotFound error when user is not found', (done) => {
+                catchers.add({
+                    'firstName': 'test',
+                    'lastName': 'test',
+                    'email': 'test@test.com',
+                    'phone': '07777777777',
+                    'address': 'test',
+                    'city': 'test',
+                    'county': 'test',
+                    'postcode': 'WA37HX',
+                    'type': 'C'
+                }, 'CTT7HX').then((id) => {
+
+                    request(server)
+                        .get('/api/v1/users/email/test1@test.com')
+                        .set('Accept', 'application/json')
+                        .expect('Content-Type', /json/)
+                        .expect(404)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            res.body.should.eql({ code: 'ResourceNotFound', message: 'No matching user found!' });
+                            done();
+                        });
+                });
+            });
+        });
+    });
+
     describe('GET /catchers', () => {
         //Cleanup
         afterEach(() => 
