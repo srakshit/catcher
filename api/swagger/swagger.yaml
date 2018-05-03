@@ -31,6 +31,45 @@ paths:
           schema:
             # a pointer to a definition
             $ref: "#/definitions/SuccessResponse"
+  /confirm:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: serviceCheck
+    get:
+      description: Confirm user and redirect to url
+      # used as the method name of the controller
+      operationId: confirmUser
+      parameters:
+        - in: query
+          name: clientId
+          description: client Id
+          required: true
+          type: string
+        - in: query
+          name: userName
+          description: User Name
+          required: true
+          type: string
+        - in: query
+          name: confirmationCode
+          description: Confirmation Code
+          required: true
+          type: integer
+        - in: query
+          name: redirectUrl
+          description: Redirect Url
+          required: true
+          type: string
+      responses:
+        "302":
+          description: Success, redirect to Url
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /users/email/{email}:
     # binds a127 app logic to a route
     x-swagger-router-controller: registration
