@@ -53,7 +53,7 @@ paths:
           name: confirmationCode
           description: Confirmation Code
           required: true
-          type: integer
+          type: string
         - in: query
           name: redirectUrl
           description: Redirect Url
