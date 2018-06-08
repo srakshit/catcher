@@ -14,7 +14,7 @@ describe('controllers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
+                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
 
         describe('happy path', () => {
             it('should get a user', (done) => {
@@ -84,7 +84,7 @@ describe('controllers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
+                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
 
         describe('happy path', () => {
             it('should get a catcher by id', (done) => {
@@ -187,7 +187,7 @@ describe('controllers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
+                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
 
         describe('happy path', () => {
             it('should get a catcher', (done) => {
@@ -255,11 +255,11 @@ describe('controllers', () => {
         });
     });
 
-    describe.only('POST /catchers', () => {
+    describe('POST /catchers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
+                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
 
         describe('happy path', () => {
             it('should add a catcher', (done) => {
@@ -304,7 +304,7 @@ describe('controllers', () => {
                     'type': 'C'
                 }).then();
             });
-
+            
             it('should throw InvalidContent error if phone is alphanumeric', (done) => {
                 request(server)
                     .post('/api/v1/catchers')
@@ -383,7 +383,7 @@ describe('controllers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
+                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
 
         describe('happy path', () => {
             it('should update a catcher when all fields are provided', (done) => {
@@ -407,7 +407,6 @@ describe('controllers', () => {
                             'lastName': 'test1',
                             'email': 'test@test.com',
                             'phone': '07777777778',
-                            'uid': 'usr_' + uid(),
                             'address': 'test1',
                             'city': 'test1',
                             'county': 'test1',
