@@ -71,7 +71,7 @@ function getCatcherById(req, res, next) {
         catchers.getByUid(id)
             .then((catcher) => {
                 if (catcher) {
-                    catchers.getSubscribersAllocatedToCatcher(catcher.id)
+                    catchers.getSubscribersAllocatedToCatcher(catcher.uid)
                         .then((allocatedSubscribers) => {
                             catcher.subscriber = allocatedSubscribers;
                             delete catcher.id;
@@ -91,8 +91,8 @@ function getCatcherById(req, res, next) {
         catchers.getById(id)
             .then((catcher) => {
                 if (catcher) {
-                    catchers.getSubscribersAllocatedToCatcher(catcher.id)
-                        .then((allocatedSubscribers) => {
+                    catchers.getSubscribersAllocatedToCatcher(catcher.uid)
+                        .then((c) => {
                             catcher.subscriber = allocatedSubscribers;
                             delete catcher.id;
                             delete catcher.user_id;
@@ -108,6 +108,24 @@ function getCatcherById(req, res, next) {
                 return next(new errs.InternalError(err.message, 'Failed to retrieve catcher!'));
             });
     }
+}
+
+function getSubscribersAllocatedToCatcher(req, res, next) {
+    let uid = req.swagger.params.uid.value;
+    
+    catchers.getSubscribersAllocatedToCatcher(uid)
+            .then((allocatedSubscribers) => {
+                if (allocatedSubscribers) {
+                    res.send(200, allocatedSubscribers);
+                    return next();
+                }else {
+                    return next(new errs.ResourceNotFoundError('No subscriber is allocated to the catcher!'))
+                }
+            })
+            .catch((err) => {
+                //TODO: Test code path
+                return next(new errs.InternalError(err.message, 'Failed to retrieve subscriber allocation to catcher'));
+            });
 }
 
 function getCatcherByEmail(req, res, next) {
@@ -151,5 +169,6 @@ module.exports = {
     getCatcherById: getCatcherById,
     getCatcherByEmail: getCatcherByEmail,
     updateCatcher: updateCatcher,
-    getUserByEmail: getUserByEmail
+    getUserByEmail: getUserByEmail,
+    getSubscribersAllocatedToCatcher: getSubscribersAllocatedToCatcher
 };
