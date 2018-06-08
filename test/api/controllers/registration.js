@@ -1,16 +1,20 @@
 'use strict';
 
-var should = require('should');
-var request = require('supertest');
-var server = require('../../../app');
-var catchers = require('../../../db/catchers');
+const should = require('should');
+const request = require('supertest');
+const server = require('../../../app');
+const catchers = require('../../../db/catchers');
+const generate = require('nanoid/generate');
+
+
+let uid = () => generate('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 22);
 
 describe('controllers', () => {
     describe('GET /users', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
+                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
 
         describe('happy path', () => {
             it('should get a user', (done) => {
@@ -19,6 +23,7 @@ describe('controllers', () => {
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
@@ -52,6 +57,7 @@ describe('controllers', () => {
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
@@ -78,22 +84,23 @@ describe('controllers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
+                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
 
         describe('happy path', () => {
-            it('should get a catcher', (done) => {
+            it('should get a catcher by id', (done) => {
                 catchers.add({
                     'firstName': 'test',
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
                     'postcode': 'WA37HX',
                     'type': 'C'
                 }, 'CTT7HX').then((id) => {
-
+                
                     request(server)
                         .get('/api/v1/catchers/' + id[0])
                         .set('Accept', 'application/json')
@@ -111,6 +118,39 @@ describe('controllers', () => {
                         });
                 });
             });
+            it('should get a catcher by uid', (done) => {
+                request(server)
+                    .post('/api/v1/catchers/')
+                    .send({
+                        'firstName': 'test',
+                        'lastName': 'test',
+                        'email': 'test@test.com',
+                        'phone': '07777777777',
+                        'uid': 'usr_' + uid(),
+                        'address': 'test',
+                        'city': 'test',
+                        'county': 'test',
+                        'postcode': 'WA37HX',
+                        'type': 'C'
+                    })
+                    .end((err, res) => {
+                        request(server)
+                            .get('/api/v1/catchers/' + res.body.uid)
+                            .set('Accept', 'application/json')
+                            .expect('Content-Type', /json/)
+                            .expect(200)
+                            .end((err, res) => {
+                                should.not.exist(err);
+                                res.body.firstName.should.eql('test');
+                                res.body.lastName.should.eql('test');
+                                res.body.email.should.eql('test@test.com');
+                                res.body.phone.should.eql('07777777777');
+                                res.body.address.should.eql('test');
+                                res.body.postcode.should.eql('WA37HX');
+                                done();
+                            });
+                });
+            });
         });
 
         describe('error paths', () => {
@@ -120,6 +160,7 @@ describe('controllers', () => {
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
@@ -146,7 +187,7 @@ describe('controllers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
+                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
 
         describe('happy path', () => {
             it('should get a catcher', (done) => {
@@ -155,6 +196,7 @@ describe('controllers', () => {
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
@@ -190,6 +232,7 @@ describe('controllers', () => {
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
@@ -212,11 +255,11 @@ describe('controllers', () => {
         });
     });
 
-    describe('POST /catchers', () => {
+    describe.only('POST /catchers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
+                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
 
         describe('happy path', () => {
             it('should add a catcher', (done) => {
@@ -227,6 +270,7 @@ describe('controllers', () => {
                         'lastName': 'test',
                         'email': 'test@test.com',
                         'phone': '07777777777',
+                        'uid': 'usr_' + uid(),
                         'address': 'test',
                         'city': 'test',
                         'county': 'test',
@@ -252,6 +296,7 @@ describe('controllers', () => {
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
@@ -268,6 +313,7 @@ describe('controllers', () => {
                         'lastName': 'test',
                         'email': 'test@test.com',
                         'phone': 'abcdefghijk',
+                        'uid': 'usr_' + uid(),
                         'address': 'test',
                         'city': 'test',
                         'county': 'test',
@@ -291,6 +337,7 @@ describe('controllers', () => {
                         'lastName': 'test',
                         'email': 'test@test.com',
                         'phone': '07777777778',
+                        'uid': 'usr_' + uid(),
                         'address': 'test',
                         'city': 'test',
                         'county': 'test',
@@ -314,6 +361,7 @@ describe('controllers', () => {
                         'lastName': 'test',
                         'email': 'test1@test.com',
                         'phone': '07777777777',
+                        'uid': 'usr_' + uid(),
                         'address': 'test',
                         'city': 'test',
                         'county': 'test',
@@ -335,7 +383,7 @@ describe('controllers', () => {
         //Cleanup
         afterEach(() => 
             catchers.getByEmail('test@test.com')
-                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
+                .then((catcher) => catchers.deleteByUid(catcher.uid).then()));
 
         describe('happy path', () => {
             it('should update a catcher when all fields are provided', (done) => {
@@ -344,6 +392,7 @@ describe('controllers', () => {
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
@@ -358,6 +407,7 @@ describe('controllers', () => {
                             'lastName': 'test1',
                             'email': 'test@test.com',
                             'phone': '07777777778',
+                            'uid': 'usr_' + uid(),
                             'address': 'test1',
                             'city': 'test1',
                             'county': 'test1',
@@ -391,6 +441,7 @@ describe('controllers', () => {
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
@@ -431,6 +482,7 @@ describe('controllers', () => {
                     'lastName': 'test',
                     'email': 'test@test.com',
                     'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
                     'address': 'test',
                     'city': 'test',
                     'county': 'test',
@@ -441,6 +493,7 @@ describe('controllers', () => {
                         .put('/api/v1/catchers')
                         .send({
                             'id': id[0],
+                            'uid': 'usr_' + uid(),
                             'email': 'test@test.com',
                             'isActive': false
                         })

@@ -1,8 +1,11 @@
 'use strict';
 
-var errs = require('restify-errors');
-var catchers = require('../../db/catchers');
-var users = require('../../db/users');
+const errs = require('restify-errors');
+const catchers = require('../../db/catchers');
+const users = require('../../db/users');
+const generate = require('nanoid/generate');
+
+let uid = () => generate('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 22);
 
 function addCatcher(req, res, next) {
     let catcher = req.swagger.params.catcher.value;
@@ -13,13 +16,17 @@ function addCatcher(req, res, next) {
     }
 
     catcher.postcode = catcher.postcode.replace(' ', '');
+    catcher.uid = 'usr_' + uid();
 
     let catcherIdPrefix = 'C' + catcher.lastName.substr(0, 1).toUpperCase() + catcher.firstName.substr(0, 1).toUpperCase() + catcher.postcode.toUpperCase();
 
     catchers.add(catcher, catcherIdPrefix)
         .then((id) => {
-            res.send(201, {message: 'Catcher ' + catcher.firstName + ' ' + catcher.lastName + ' added!', id: id[0]});
-            return next();
+            catchers.getById(id[0])
+                .then((newCatcher) => {
+                    res.send(201, {message: 'Catcher ' + catcher.firstName + ' ' + catcher.lastName + ' added!', id: id[0], uid: newCatcher.uid});
+                    return next();
+                });            
         })
         .catch((err) => {
             let errMsg = err.message.toLowerCase();
@@ -58,21 +65,41 @@ function updateCatcher(req, res, next) {
 }
 
 function getCatcherById(req, res, next) {
-    let id = req.swagger.params.id.value;
+    let id = req.swagger.params.uid.value;
     
-    catchers.getById(id)
-        .then((catcher) => {
-            if (catcher) {
-                res.send(200, catcher);
-                return next();
-            }else {
-                return next(new errs.ResourceNotFoundError('No matching catcher found!'))
-            }
-        })
-        .catch((err) => {
-            //TODO: Test code path
-            return next(new errs.InternalError(err.message, 'Failed to retrieve catcher!'));
-        });
+    if (id.startsWith('usr_')) {
+        catchers.getByUid(id)
+            .then((catcher) => {
+                if (catcher) {
+                    delete catcher.id;
+                    delete catcher.user_id;
+                    res.send(200, catcher);
+                    return next();
+                }else {
+                    return next(new errs.ResourceNotFoundError('No matching catcher found!'))
+                }
+            })
+            .catch((err) => {
+                //TODO: Test code path
+                return next(new errs.InternalError(err.message, 'Failed to retrieve catcher!'));
+            });
+    }else {
+        catchers.getById(id)
+            .then((catcher) => {
+                if (catcher) {
+                    delete catcher.id;
+                    delete catcher.user_id;
+                    res.send(200, catcher);
+                    return next();
+                }else {
+                    return next(new errs.ResourceNotFoundError('No matching catcher found!'))
+                }
+            })
+            .catch((err) => {
+                //TODO: Test code path
+                return next(new errs.InternalError(err.message, 'Failed to retrieve catcher!'));
+            });
+    }
 }
 
 function getCatcherByEmail(req, res, next) {
