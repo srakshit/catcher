@@ -11,6 +11,10 @@ function Catchers() {
     return knex('catchers');
 }
 
+function CatcherAllocation() {
+    return knex('catcher_allocation');
+}
+
 function getByEmail(email) {
     return Catchers()
             .innerJoin('users', 'catchers.user_id', 'users.id')
@@ -30,6 +34,24 @@ function getByUid(uid) {
             .innerJoin('users', 'catchers.user_id', 'users.id')
             .where('uid', uid)
             .first();
+}
+
+function getSubscribersAllocatedToCatcher(id) {
+    return CatcherAllocation()
+            .innerJoin('catchers', 'catcher_allocation.catcher_id', 'catchers.user_id')
+            .innerJoin('users', 'catcher_allocation.subscriber_id', 'users.id')
+            .innerJoin('subscribers', 'catcher_allocation.subscriber_id', 'subscribers.user_id')
+            .where('catchers.user_id', id)
+            .select('subscribers.subscriber_id as ref_id'
+                ,'users.uid'
+                ,'users.firstName'
+                ,'users.lastName'
+                ,'users.address'
+                ,'users.city'
+                ,'users.county'
+                ,'users.postcode'
+                ,'users.phone'
+                ,'users.email');
 }
 
 function add(catcher, catcherIdPrefix) {  
@@ -137,6 +159,7 @@ function deleteByUserId(id) {
     });
 }
 
+//TODO: This is not working as expected. Fix it!
 function deleteByUid(uid) {
     return getByUid(uid)
         .then((catcher) => {
@@ -151,5 +174,6 @@ module.exports = {
     add: add,
     deleteByUserId: deleteByUserId,
     deleteByUid: deleteByUid,
-    update: update
+    update: update,
+    getSubscribersAllocatedToCatcher: getSubscribersAllocatedToCatcher
 };

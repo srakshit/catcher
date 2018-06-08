@@ -71,10 +71,14 @@ function getCatcherById(req, res, next) {
         catchers.getByUid(id)
             .then((catcher) => {
                 if (catcher) {
-                    delete catcher.id;
-                    delete catcher.user_id;
-                    res.send(200, catcher);
-                    return next();
+                    catchers.getSubscribersAllocatedToCatcher(catcher.id)
+                        .then((allocatedSubscribers) => {
+                            catcher.subscriber = allocatedSubscribers;
+                            delete catcher.id;
+                            delete catcher.user_id;
+                            res.send(200, catcher);
+                            return next();
+                    });
                 }else {
                     return next(new errs.ResourceNotFoundError('No matching catcher found!'))
                 }
@@ -87,10 +91,14 @@ function getCatcherById(req, res, next) {
         catchers.getById(id)
             .then((catcher) => {
                 if (catcher) {
-                    delete catcher.id;
-                    delete catcher.user_id;
-                    res.send(200, catcher);
-                    return next();
+                    catchers.getSubscribersAllocatedToCatcher(catcher.id)
+                        .then((allocatedSubscribers) => {
+                            catcher.subscriber = allocatedSubscribers;
+                            delete catcher.id;
+                            delete catcher.user_id;
+                            res.send(200, catcher);
+                            return next();
+                    });
                 }else {
                     return next(new errs.ResourceNotFoundError('No matching catcher found!'))
                 }
