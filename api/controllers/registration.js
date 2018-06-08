@@ -73,7 +73,7 @@ function getCatcherById(req, res, next) {
                 if (catcher) {
                     catchers.getSubscribersAllocatedToCatcher(catcher.uid)
                         .then((allocatedSubscribers) => {
-                            catcher.subscriber = allocatedSubscribers;
+                            catcher.subscribers = allocatedSubscribers;
                             delete catcher.id;
                             delete catcher.user_id;
                             res.send(200, catcher);
@@ -92,8 +92,8 @@ function getCatcherById(req, res, next) {
             .then((catcher) => {
                 if (catcher) {
                     catchers.getSubscribersAllocatedToCatcher(catcher.uid)
-                        .then((c) => {
-                            catcher.subscriber = allocatedSubscribers;
+                        .then((allocatedSubscribers) => {
+                            catcher.subscribers = allocatedSubscribers;
                             delete catcher.id;
                             delete catcher.user_id;
                             res.send(200, catcher);
@@ -108,24 +108,6 @@ function getCatcherById(req, res, next) {
                 return next(new errs.InternalError(err.message, 'Failed to retrieve catcher!'));
             });
     }
-}
-
-function getSubscribersAllocatedToCatcher(req, res, next) {
-    let uid = req.swagger.params.uid.value;
-    
-    catchers.getSubscribersAllocatedToCatcher(uid)
-            .then((allocatedSubscribers) => {
-                if (allocatedSubscribers) {
-                    res.send(200, allocatedSubscribers);
-                    return next();
-                }else {
-                    return next(new errs.ResourceNotFoundError('No subscriber is allocated to the catcher!'))
-                }
-            })
-            .catch((err) => {
-                //TODO: Test code path
-                return next(new errs.InternalError(err.message, 'Failed to retrieve subscriber allocation to catcher'));
-            });
 }
 
 function getCatcherByEmail(req, res, next) {
@@ -169,6 +151,5 @@ module.exports = {
     getCatcherById: getCatcherById,
     getCatcherByEmail: getCatcherByEmail,
     updateCatcher: updateCatcher,
-    getUserByEmail: getUserByEmail,
-    getSubscribersAllocatedToCatcher: getSubscribersAllocatedToCatcher
+    getUserByEmail: getUserByEmail
 };

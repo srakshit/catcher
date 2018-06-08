@@ -204,7 +204,7 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /catchers/{uid}/subscribers:
     # binds a127 app logic to a route
-    x-swagger-router-controller: registration
+    x-swagger-router-controller: allocation
     get:
       description: Returns subscribers allocated to the catcher
       # used as the method name of the controller
