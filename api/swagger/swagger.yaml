@@ -206,7 +206,7 @@ paths:
     # binds a127 app logic to a route
     x-swagger-router-controller: registration
     get:
-      description: Returns Catcher info to the caller
+      description: Returns subscribers allocated to the catcher
       # used as the method name of the controller
       operationId: getSubscribersAllocatedToCatcher
       parameters:
