@@ -9,7 +9,7 @@ function getSubscribersAllocatedToCatcher(req, res, next) {
     
     catchers.getSubscribersAllocatedToCatcher(uid)
             .then((allocatedSubscribers) => {
-                if (allocatedSubscribers) {
+                if (allocatedSubscribers.length > 0) {
                     res.send(200, allocatedSubscribers);
                     return next();
                 }else {

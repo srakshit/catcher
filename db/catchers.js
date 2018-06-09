@@ -55,8 +55,8 @@ function getSubscribersAllocatedToCatcher(uid) {
                 ,'u2.email');
 }
 
-function add(catcher, catcherIdPrefix) {  
-    return knex.transaction(function (t) {
+function add(catcher, catcherIdPrefix) {
+    return knex.transaction( (t) => {
         return Users()
             .transacting(t)
             .insert(catcher, 'id')
