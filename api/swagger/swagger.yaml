@@ -22,7 +22,8 @@ paths:
     # binds a127 app logic to a route
     x-swagger-router-controller: serviceCheck
     get:
-      description: Returns pong to the caller
+      summary: Returns pong. Used for health check
+      description: Returns pong. Used for health check
       # used as the method name of the controller
       operationId: getPong
       responses:
@@ -35,7 +36,8 @@ paths:
     # binds a127 app logic to a route
     x-swagger-router-controller: serviceCheck
     get:
-      description: Confirm user and redirect to url
+      summary: Confirm user email and redirect to url
+      description: Confirm user amail nd redirect to url
       # used as the method name of the controller
       operationId: confirmUser
       parameters:
@@ -74,7 +76,8 @@ paths:
     # binds a127 app logic to a route
     x-swagger-router-controller: registration
     get:
-      description: Returns User (Catcher/Subscriber) info to the caller
+      summary: Returns User (Catcher/Subscriber) info
+      description: Returns User (Catcher/Subscriber) info
       # used as the method name of the controller
       operationId: getUserByEmail
       parameters:
@@ -98,7 +101,8 @@ paths:
     # binds a127 app logic to a route
     x-swagger-router-controller: registration
     get:
-      description: Returns Catcher info to the caller
+      summary: Returns catcher info
+      description: Returns catcher info
       # used as the method name of the controller
       operationId: getCatcherById
       parameters:
@@ -122,7 +126,8 @@ paths:
     # binds a127 app logic to a route
     x-swagger-router-controller: registration
     get:
-      description: Returns Catcher info to the caller
+      summary: Returns catcher info
+      description: Returns catcher info
       # used as the method name of the controller
       operationId: getCatcherByEmail
       parameters:
@@ -206,6 +211,7 @@ paths:
     # binds a127 app logic to a route
     x-swagger-router-controller: allocation
     get:
+      summary: Returns subscribers allocated to the catcher
       description: Returns subscribers allocated to the catcher
       # used as the method name of the controller
       operationId: getSubscribersAllocatedToCatcher
