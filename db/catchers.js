@@ -103,18 +103,33 @@ function update(catcher) {
         catcherObj.isActive = catcher.isActive;
     }
 
-    
+    if (catcher.id) {
+        return getById(catcher.id)
+            .then((catcher) => {
+                return updateCatcher(catcher.id, userObj, catcherObj);
+            })
+    }
+
+    if (catcher.uid) {
+        return getByUid(catcher.uid)
+            .then((catcher) => {
+                return updateCatcher(catcher.id, userObj, catcherObj);
+            })
+    }
+}
+
+function updateCatcher(user_id, userObj, catcherObj) {
     if (!_.isEmpty(userObj) && !_.isEmpty(catcherObj)) {
         //Update both Users and Catchers table
         return knex.transaction((t) => {
             return Users()
                 .transacting(t)
-                .where('email', catcher.email)
+                .where('id', user_id)
                 .update(userObj)
                 .then((id) => {
                     return Catchers()
                         .transacting(t)
-                        .where('catcher_id', catcher.id)
+                        .where('user_id', user_id)
                         .update(catcherObj)
                 })
                 .then(t.commit)
@@ -125,7 +140,7 @@ function update(catcher) {
         return knex.transaction((t) => {
             return Users()
                 .transacting(t)
-                .where('email', catcher.email)
+                .where('id', user_id)
                 .update(userObj)
                 .then(t.commit)
                 .catch(t.rollback)
@@ -135,12 +150,12 @@ function update(catcher) {
         return knex.transaction((t) => {
             return Catchers()
                 .transacting(t)
-                .where('catcher_id', catcher.id)
+                .where('user_id', user_id)
                 .update(catcherObj)
                 .then(t.commit)
                 .catch(t.rollback)
         });
-    }   
+    }  
 }
 
 function deleteByUserId(id) {

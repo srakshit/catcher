@@ -64,6 +64,30 @@ function updateCatcher(req, res, next) {
         });
 }
 
+function updateCatcherByUid(req, res, next) {
+    let catcher = req.swagger.params.catcher.value;
+    let uid = req.swagger.params.uid.value;
+
+    if (catcher.postcode) {
+        catcher.postcode = catcher.postcode.replace(' ', '');
+    }
+
+    catcher.uid = uid;
+
+    if (catcher.phone && new RegExp(/[a-zA-Z]/).test(catcher.phone)) {
+        return next(new errs.InvalidContentError('phone number can\'t be alphanumeric!'));
+    }
+
+    catchers.update(catcher)
+        .then(() => {
+            res.send(204);
+            return next();
+        })
+        .catch((err) => {
+            return next(new errs.InternalError(err.message, 'Failed to create catcher!'));
+        });
+}
+
 function getCatcherById(req, res, next) {
     let id = req.swagger.params.uid.value;
     
@@ -151,5 +175,6 @@ module.exports = {
     getCatcherById: getCatcherById,
     getCatcherByEmail: getCatcherByEmail,
     updateCatcher: updateCatcher,
+    updateCatcherByUid: updateCatcherByUid,
     getUserByEmail: getUserByEmail
 };

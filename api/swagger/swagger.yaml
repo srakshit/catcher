@@ -3,7 +3,7 @@ info:
   version: "0.0.1"
   title: Catcher Service
 # during dev, should point to your local machine
-host: localhost:8080
+host: 127.0.0.1:8080
 # basePath prefixes all resource paths 
 basePath: /api/v1/
 # 
@@ -122,6 +122,37 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+    put:
+      summary: Update an existing catcher
+      operationId: updateCatcherByUid
+      description: Update an existing catcher
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          description: Catcher uniqueId
+          type: string
+        - in: body
+          name: catcher
+          required: true
+          description: Update Catcher
+          schema:
+            $ref: '#/definitions/UpdateCatcherByUid'
+      responses:
+        204:
+          description: Catcher updated
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/SuccessResponse"
+        400:
+          description: Invalid catcher id provided
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ErrorResponse"
   /catchers/email/{email}:
     # binds a127 app logic to a route
     x-swagger-router-controller: registration
@@ -180,22 +211,21 @@ paths:
           schema:
             # a pointer to a definition
             $ref: "#/definitions/ErrorResponse"
-    
     put:
       summary: Update an existing catcher
       operationId: updateCatcher
       description: Update an existing catcher
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: catcher
-        required: true
-        description: Update Catcher
-        schema:
-          $ref: '#/definitions/UpdateCatcher'
+        - in: body
+          name: catcher
+          required: true
+          description: Update Catcher
+          schema:
+            $ref: '#/definitions/UpdateCatcher'
       responses:
         204:
           description: Catcher updated
@@ -303,6 +333,43 @@ definitions:
         type: string
         format: email
         example: sherlock.holmes@detective.com
+      phone:
+        type: string
+        minLength: 11
+        maxLength: 11
+        example: 0123456789
+      address:
+        type: string
+        minLength: 1
+        example: 221B Baker Steeet
+      city:
+        type: string
+        minLength: 1
+        example: London
+      county:
+        type: string
+        example: Londng Borough
+      postcode:
+        type: string
+        minLength: 6
+        maxLength: 9
+        description: Postcode without spaces
+        example: SW19 01B
+      isActive:
+        type: boolean
+        description: Catcher status (active/inactive)
+        example: true
+  UpdateCatcherByUid:
+    type: object
+    properties:
+      firstName:
+        type: string
+        minLength: 1
+        example: Sherlock
+      lastName:
+        type: string
+        minLength: 1
+        example: Holmes
       phone:
         type: string
         minLength: 11

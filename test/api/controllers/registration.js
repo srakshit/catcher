@@ -405,8 +405,8 @@ describe('controllers', () => {
                             'id': id[0],
                             'firstName': 'test1',
                             'lastName': 'test1',
-                            'email': 'test@test.com',
                             'phone': '07777777778',
+                            'email': 'test@test.com',
                             'address': 'test1',
                             'city': 'test1',
                             'county': 'test1',
@@ -430,11 +430,10 @@ describe('controllers', () => {
                                         done();
                                     })
                         });
-
                 });
             });
 
-            it('should update a catcher when few personal detail fields are upadted', (done) => {
+            it('should update a catcher when few personal detail fields are updated', (done) => {
                 catchers.add({
                     'firstName': 'test',
                     'lastName': 'test',
@@ -508,6 +507,138 @@ describe('controllers', () => {
                                     })
                         });
 
+                });
+            });
+        });
+    });
+
+    describe('PUT /catchers/uid', () => {
+        //Cleanup
+        afterEach(() => 
+            catchers.getByEmail('test@test.com')
+                .then((catcher) => catchers.deleteByUserId(catcher.id).then()));
+
+        describe('happy path', () => {
+            it('should update a catcher when all fields are provided', (done) => {
+                catchers.add({
+                    'firstName': 'test',
+                    'lastName': 'test',
+                    'email': 'test@test.com',
+                    'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
+                    'address': 'test',
+                    'city': 'test',
+                    'county': 'test',
+                    'postcode': 'WA37HX',
+                    'type': 'C'
+                }, 'CTT7HX').then((id) => {
+                    catchers.getById(id[0]).then((catcher) => {
+                        request(server)
+                        .put('/api/v1/catchers/' + catcher.uid)
+                        .send({
+                            'firstName': 'test1',
+                            'lastName': 'test1',
+                            'phone': '07777777778',
+                            'address': 'test1',
+                            'city': 'test1',
+                            'county': 'test1',
+                            'postcode': 'WA2 7GA',
+                            'isActive' : false
+                        })
+                        .set('Accept', 'application/json')
+                        .expect(204)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            catchers.getByUid(catcher.uid)
+                                    .then((catcher) => {
+                                        catcher.firstName.should.eql('test1');
+                                        catcher.lastName.should.eql('test1');
+                                        catcher.phone.should.eql('07777777778');
+                                        catcher.address.should.eql('test1');
+                                        catcher.city.should.eql('test1');
+                                        catcher.county.should.eql('test1');
+                                        catcher.postcode.should.eql('WA27GA');
+                                        catcher.isActive.should.eql(false);
+                                        done();
+                                    })
+                        });
+                    });
+                });
+            });
+
+            it('should update a catcher when few personal detail fields are updated', (done) => {
+                catchers.add({
+                    'firstName': 'test',
+                    'lastName': 'test',
+                    'email': 'test@test.com',
+                    'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
+                    'address': 'test',
+                    'city': 'test',
+                    'county': 'test',
+                    'postcode': 'WA37HX',
+                    'type': 'C'
+                }, 'CTT7HX').then((id) => {
+                    catchers.getById(id[0]).then((catcher) => {
+                        request(server)
+                            .put('/api/v1/catchers/' + catcher.uid)
+                            .send({
+                                'address': 'test1',
+                                'city': 'test1',
+                                'county': 'test1',
+                                'postcode': 'WA27GA'
+                            })
+                            .set('Accept', 'application/json')
+                            .expect(204)
+                            .end((err, res) => {
+                                should.not.exist(err);
+                                catchers.getByUid(catcher.uid)
+                                        .then((catcher) => {
+                                            catcher.firstName.should.eql('test');
+                                            catcher.address.should.eql('test1');
+                                            catcher.city.should.eql('test1');
+                                            catcher.county.should.eql('test1');
+                                            catcher.postcode.should.eql('WA27GA');
+                                            done();
+                                        })
+                            });
+                    });
+
+                });
+            });
+
+            it('should update a catcher when only status field is updated', (done) => {
+                catchers.add({
+                    'firstName': 'test',
+                    'lastName': 'test',
+                    'email': 'test@test.com',
+                    'phone': '07777777777',
+                    'uid': 'usr_' + uid(),
+                    'address': 'test',
+                    'city': 'test',
+                    'county': 'test',
+                    'postcode': 'WA37HX',
+                    'type': 'C'
+                }, 'CTT7HX').then((id) => {
+                    catchers.getById(id[0]).then((catcher) => {
+                        request(server)
+                            .put('/api/v1/catchers/' + catcher.uid)
+                            .send({
+                                'uid': 'usr_' + uid(),
+                                'isActive': false
+                            })
+                            .set('Accept', 'application/json')
+                            .expect(204)
+                            .end((err, res) => {
+                                should.not.exist(err);
+                                catchers.getByUid(catcher.uid)
+                                        .then((catcher) => {
+                                            catcher.firstName.should.eql('test');
+                                            catcher.isActive.should.eql(false);
+                                            done();
+                                        })
+                            });
+                    });
                 });
             });
         });
