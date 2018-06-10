@@ -58,6 +58,7 @@ function getSubscribersAllocatedToCatcher(uid) {
 
 function add(catcher, catcherIdPrefix) {
     catcher.created_at = moment().format('YYYY-MM-DD HH:mm:ss');
+    catcher.updated_at = moment().format('YYYY-MM-DD HH:mm:ss');
 
     return knex.transaction( (t) => {
         return Users()
