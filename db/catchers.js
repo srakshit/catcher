@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
+const moment = require('moment');
 const knex = require('./knex.js');
 
 function Users() {
@@ -56,6 +57,8 @@ function getSubscribersAllocatedToCatcher(uid) {
 }
 
 function add(catcher, catcherIdPrefix) {
+    catcher.created_at = moment().format('YYYY-MM-DD HH:mm:ss');
+
     return knex.transaction( (t) => {
         return Users()
             .transacting(t)
@@ -73,6 +76,8 @@ function add(catcher, catcherIdPrefix) {
 function update(catcher) {
     let userObj = {};
     let catcherObj = {};
+
+    userObj.updated_at = moment().format('YYYY-MM-DD HH:mm:ss');
     
     if (catcher.firstName) {
         userObj.firstName = catcher.firstName;
